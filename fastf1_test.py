@@ -13,8 +13,8 @@ driver_laps = session.laps.pick_drivers('VER')
 conditions = session.weather_data
 
 print(driver['DriverNumber']) #driver number
-driver_laps['LapTime'] = driver_laps['LapTime'].dt.round('ms')
-print(driver_laps['LapTime']) 
+
+print(driver_laps['LapTime'])
 
 
 #print(driver_laps['LapTime_str'].min()) #fastest lap of the session
