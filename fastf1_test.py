@@ -1,3 +1,4 @@
+import math
 import fastf1.plotting
 import fastf1 as F
 import pandas as pd
@@ -5,11 +6,12 @@ from datetime import timedelta
 
 
 fastf1.Cache.enable_cache("D:\github-desktop-reps\F1-weekend-analysis-\cache")
-session = F.get_session(2023, 1, "R")
+session = F.get_session(2023, 1, "Q")
 session.load()
 pd.options.display.max_columns = None
 
 def format_time_delta(td):
+    if math.isnan(td): return "no run"
     total_ms = td.total_seconds() * 1000
     minutes = int(total_ms // 60000)
     seconds = int((total_ms % 60000) // 1000)
