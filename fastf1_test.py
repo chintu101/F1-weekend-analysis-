@@ -11,7 +11,7 @@ session.load()
 pd.options.display.max_columns = None
 
 def format_time_delta(td):
-    if math.isnan(td): return "no run"
+
     total_ms = td.total_seconds() * 1000
     minutes = int(total_ms // 60000)
     seconds = int((total_ms % 60000) // 1000)
@@ -26,12 +26,12 @@ conditions = session.weather_data
 
 print(driver['DriverNumber']) #driver number
 
-
-for i in driver_laps['LapTime']:
+td = driver_laps['LapTime'].dropna()
+for i in td:
     print(format_time_delta(i))
 
 
-print(driver_laps['LapTime_str'].min()) #fastest lap of the session
+#print(driver_laps['LapTime_str'].min()) #fastest lap of the session
 
 print("minimum air temp for the session: ", conditions['AirTemp'].min(), "C") #minimum air temp of session
 print("maximum air temp for the session: ", conditions['AirTemp'].max(), "C")
