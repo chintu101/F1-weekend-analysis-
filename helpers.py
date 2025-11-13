@@ -2,10 +2,11 @@ import fastf1 as f
 import pandas as pd
 from datetime import datetime, timezone
 import time
+import os
 
 
 
-f.Cache.enable_cache(r"D:\github-desktop-reps\F1-weekend-analysis-\cache")
+f.Cache.enable_cache(os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache"))
 
 
 def get_event_schedule_df(year):
@@ -28,8 +29,6 @@ def find_latest_event():
     else:
         return "No Past Events Found"
 
-
-def
 
 #get_event_schedule_df(2021)
 #print(find_latest_event())
