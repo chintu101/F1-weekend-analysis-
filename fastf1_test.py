@@ -38,3 +38,4 @@ print("maximum air temp for the session: ", conditions['AirTemp'].max(), "C")
 print("maximum air temp for the session: ", round(conditions['AirTemp'].mean(), 2), "C")
 
 
+
