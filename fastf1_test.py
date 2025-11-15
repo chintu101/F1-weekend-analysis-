@@ -5,7 +5,7 @@ import pandas as pd
 from datetime import timedelta
 
 
-fastf1.Cache.enable_cache("D:\github-desktop-reps\F1-weekend-analysis-\cache")
+fastf1.Cache.enable_cache("/backend/cache")
 session = F.get_session(2023, 1, "Q")
 session.load()
 pd.options.display.max_columns = None
