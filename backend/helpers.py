@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 import time
 import os
 
-
+from scipy.constants import value
 
 f.Cache.enable_cache(os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache"))
 
@@ -35,8 +35,21 @@ def race_results():
 
     session = f.get_session(year=datetime.now(timezone.utc).year, gp=session_name, identifier='R')
     session.load()
-    session_results = session.results
-    return session_results.to_dict(orient="records")
+    session_results = session.results.to_dict(orient="records")
+
+    clean_rows = []
+    for row in session_results:
+        clean_row = {}
+        for col, value in row.items():
+            if pd.isna(value):
+                clean_row[col] = None
+            else:
+                clean_row[col] = str(value)
+        clean_rows.append(clean_row)
+
+    return clean_rows
+
+
 
 #get_event_schedule_df(2021)
 #print(find_latest_event())
