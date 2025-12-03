@@ -27,10 +27,12 @@ def find_latest_event():
     if not past.empty:
        return past.iloc[-1]
     else:
-        return "No Past Events Found"
+        return None
 
 def loading_latest_session():
     df = find_latest_event()
+    if df is None:
+        return None
     session_name = df['EventName']
 
     session = f.get_session(year=datetime.now(timezone.utc).year, gp=session_name, identifier='R')
@@ -53,10 +55,6 @@ def race_results():
 
     return clean_rows
 
-def telemetry_data():
-    df = find_latest_event()
-    session_name = df['EventName']
 
 #get_event_schedule_df(2021)
 #print(find_latest_event())
-race_results()
