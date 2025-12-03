@@ -23,7 +23,10 @@ def driver_laptimes_api(driver):
         "laps": data
     })
 
-
+@app.route("/test/ver")
+def test_ver_direct():
+    data = get_driver_lap_times("VER")
+    return jsonify(data)
 
 
 if __name__ == "__main__":
