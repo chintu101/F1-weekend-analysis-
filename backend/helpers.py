@@ -41,31 +41,65 @@ def loading_latest_session():
 
 def race_results():
     session = loading_latest_session()
-    session_results = session.results.to_dict(orient="records")
+
+    if session is None:
+        return []
+
+    raw_results = session.results
 
     clean_rows = []
-    for row in session_results:
-        clean_row = {}
-        for col, value in row.items():
-            if pd.isna(value):
-                clean_row[col] = None
-            else:
-                clean_row[col] = str(value)
-        clean_rows.append(clean_row)
+
+    for _, row in raw_results.iterrows():
+        clean_rows.append({
+            "Position": int(row["Position"]) if not pd.isna(row["Position"]) else None,
+
+            # FIXED DRIVER NAME
+            "Driver": row.get("FullName"),
+            # 3 letter code for api
+            "DriverCode": row.get("Abbreviation"),
+
+            # FIXED TEAM NAME
+            "Team": row.get("TeamName")
+                    or row.get("Constructor")
+                    or row.get("Team"),
+
+            # TIME AS STRING (already safe)
+            "Time": str(row["Time"]) if not pd.isna(row["Time"]) else None,
+
+            "Points": float(row["Points"]) if not pd.isna(row["Points"]) else 0
+        })
 
     return clean_rows
+
 
 def get_driver_lap_times(driver_code):
     session = loading_latest_session()
 
     if session is None:
+        print("❌ Session is None")
         return []
 
-    laps = session.laps.pick_drivers(driver_code)
+    # ✅ FORCE lap data to load
+    session.load(laps=True)
+
+    laps_df = session.laps
+
+    print("✅ Total laps in session:", len(laps_df))
+
+    # ✅ See what driver identifiers actually exist
+    unique_drivers = laps_df["Driver"].unique()
+    print("✅ Drivers in lap data:", unique_drivers)
+
+    # ✅ Clean driver code
+    driver_code = driver_code.strip().upper()
+    print("✅ Requested driver:", driver_code)
+
+    driver_laps = laps_df.pick_driver(driver_code)
+    print("✅ Laps found for driver:", len(driver_laps))
 
     clean_laps = []
 
-    for _, lap in laps.iterrows():
+    for _, lap in driver_laps.iterrows():
         lap_time = lap["LapTime"]
 
         if pd.isna(lap_time):
@@ -78,6 +112,7 @@ def get_driver_lap_times(driver_code):
             "stint": int(lap.get("Stint", 0))
         })
 
+    print("✅ Clean laps returned:", len(clean_laps))
     return clean_laps
 
 

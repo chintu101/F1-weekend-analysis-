@@ -39,7 +39,7 @@ function DriversList() {
             <tr
               key={index}
               style={{ cursor: "pointer" }}
-              onClick={() => navigate(`/driver/${row.Driver}`)}
+              onClick={() => navigate(`/driver/${row.DriverCode}`)}
             >
               <td>{row.Position}</td>
               <td style={{ fontWeight: "bold", color: "blue" }}>

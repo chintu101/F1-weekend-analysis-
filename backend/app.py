@@ -18,10 +18,14 @@ def hello_api():
 @app.route("/api/laptimes/<driver>")
 def driver_laptimes_api(driver):
     data = get_driver_lap_times(driver)
+
     return jsonify({
+        "MARKER": "THIS IS THE REAL BACKEND ✅",
         "driver": driver,
         "laps": data
     })
+
+
 
 @app.route("/test/ver")
 def test_ver_direct():
