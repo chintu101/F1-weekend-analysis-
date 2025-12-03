@@ -55,6 +55,59 @@ def race_results():
 
     return clean_rows
 
+def get_driver_lap_times(driver_code):
+    session = loading_latest_session()
+
+    if session is None:
+        return []
+
+    laps = session.laps.pick_drivers(driver_code)
+
+    clean_laps = []
+
+    for _, lap in laps.iterrows():
+        lap_time = lap["LapTime"]
+
+        if pd.isna(lap_time):
+            continue
+
+        clean_laps.append({
+            "lap_number": int(lap["LapNumber"]),
+            "lap_time_seconds": float(lap_time.total_seconds()),
+            "compound": str(lap.get("Compound", "")),
+            "stint": int(lap.get("Stint", 0))
+        })
+
+    return clean_laps
+
+
+
 
 #get_event_schedule_df(2021)
 #print(find_latest_event())
+# =========================
+# MANUAL TESTING (helpers)
+# =========================
+
+if __name__ == "__main__":
+    print("\n--- TEST: get_event_schedule_df(2024) ---")
+    df = get_event_schedule_df(2024)
+    print(df.head())
+
+    print("\n--- TEST: find_latest_event() ---")
+    latest = find_latest_event()
+    print(latest)
+
+    print("\n--- TEST: loading_latest_session() ---")
+    session = loading_latest_session()
+    print(session)
+
+    print("\n--- TEST: race_results() ---")
+    results = race_results()
+    print(type(results))     # should be <class 'list'>
+    print(results[:2])       # print only first 2 drivers
+
+    print("\n--- TEST: get_driver_lap_times('VER') ---")
+    laps = get_driver_lap_times("VER")
+    print(type(laps))        # should be <class 'list'>
+    print(laps[:5])          # first 5 laps only
