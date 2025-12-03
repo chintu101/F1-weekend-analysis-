@@ -79,18 +79,12 @@ def get_driver_lap_times(driver_code):
         print("❌ Session is None")
         return []
 
-    # ✅ FORCE lap data to load
     session.load(laps=True)
-
     laps_df = session.laps
 
     print("✅ Total laps in session:", len(laps_df))
+    print("✅ Drivers in lap data:", laps_df["Driver"].unique())
 
-    # ✅ See what driver identifiers actually exist
-    unique_drivers = laps_df["Driver"].unique()
-    print("✅ Drivers in lap data:", unique_drivers)
-
-    # ✅ Clean driver code
     driver_code = driver_code.strip().upper()
     print("✅ Requested driver:", driver_code)
 
@@ -101,19 +95,35 @@ def get_driver_lap_times(driver_code):
 
     for _, lap in driver_laps.iterrows():
         lap_time = lap["LapTime"]
-
         if pd.isna(lap_time):
             continue
 
+        # ✅ FORCE EVERYTHING INTO JSON-SAFE TYPES
         clean_laps.append({
             "lap_number": int(lap["LapNumber"]),
+
             "lap_time_seconds": float(lap_time.total_seconds()),
-            "compound": str(lap.get("Compound", "")),
+
+            # ✅ SECTOR TIMES (SAFE FLOAT OR NONE)
+            "sector_1": float(lap["Sector1Time"].total_seconds())
+                if not pd.isna(lap["Sector1Time"]) else None,
+
+            "sector_2": float(lap["Sector2Time"].total_seconds())
+                if not pd.isna(lap["Sector2Time"]) else None,
+
+            "sector_3": float(lap["Sector3Time"].total_seconds())
+                if not pd.isna(lap["Sector3Time"]) else None,
+
+            # ✅ FORCE STRING, NEVER SET
+            "compound": str(lap.get("Compound")),
+
+            # ✅ FORCE INT, NEVER SET
             "stint": int(lap.get("Stint", 0))
         })
 
     print("✅ Clean laps returned:", len(clean_laps))
     return clean_laps
+
 
 
 
