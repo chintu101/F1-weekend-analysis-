@@ -51,6 +51,47 @@ export default function DriverLapGraph() {
       .catch(() => setLoading(false));
   }, [driver]);
 
+  // csv download
+  const downloadCSV = () => {
+  if (laps.length === 0) return;
+
+  const headers = [
+    "Lap",
+    "Sector 1 (s)",
+    "Sector 2 (s)",
+    "Sector 3 (s)",
+    "Lap Time (s)",
+    "Compound",
+    "Stint"
+  ];
+
+  const rows = laps.map((lap) => [
+    lap.lap_number,
+    lap.sector_1 ?? "",
+    lap.sector_2 ?? "",
+    lap.sector_3 ?? "",
+    lap.lap_time_seconds,
+    lap.compound,
+    lap.stint
+  ]);
+
+  const csvContent =
+    [headers, ...rows]
+      .map((row) => row.join(","))
+      .join("\n");
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `${driver}_laptimes.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+
   // ✅ FASTEST LAP
   const fastestLap = useMemo(() => {
     if (laps.length === 0) return null;
@@ -145,6 +186,19 @@ export default function DriverLapGraph() {
         </LineChart>
       </ResponsiveContainer>
       {/* ✅ SECTOR TIMES TABLE */}
+    
+        <button
+      onClick={downloadCSV}
+      style={{
+        marginTop: "20px",
+        padding: "10px 18px",
+        fontSize: "14px",
+        cursor: "pointer"
+      }}
+    >
+      ⬇ Download CSV
+    </button>
+
     <h2 style={{ marginTop: "40px" }}>Lap Sector Times</h2>
 
     <div style={{ maxHeight: "400px", overflowY: "auto" }}>
@@ -161,18 +215,42 @@ export default function DriverLapGraph() {
         </tr>
         </thead>
         <tbody>
-        {laps.map((lap) => (
-            <tr key={lap.lap_number}>
-            <td>{lap.lap_number}</td>
-            <td>{lap.sector_1?.toFixed(3) ?? "-"}</td>
-            <td>{lap.sector_2?.toFixed(3) ?? "-"}</td>
-            <td>{lap.sector_3?.toFixed(3) ?? "-"}</td>
-            <td>{lap.lap_time_seconds.toFixed(3)}</td>
-            <td>{lap.compound}</td>
-            <td>{lap.stint}</td>
-            </tr>
-        ))}
-        </tbody>
+  {laps.map((lap, index) => {
+    const prev = index > 0 ? laps[index - 1] : null;
+
+    const s1Delta = prev ? lap.sector_1 !== null && prev.sector_1 !== null ? lap.sector_1 - prev.sector_1 : 0 : null;
+    const s2Delta = prev ? lap.sector_2 !== null && prev.sector_2 !== null ? lap.sector_2 - prev.sector_2 : 0 : null;
+    const s3Delta = prev ? lap.sector_3 !== null && prev.sector_3 !== null ? lap.sector_3 - prev.sector_3 : 0 : null;
+
+    const getColor = (delta: number | null) => {
+      if (delta === null) return "black";
+      return delta < 0 ? "green" : delta > 0 ? "red" : "black";
+    };
+
+    return (
+      <tr key={lap.lap_number}>
+        <td>{lap.lap_number}</td>
+
+        <td style={{ color: getColor(s1Delta) }}>
+          {lap.sector_1?.toFixed(3) ?? "-"}
+        </td>
+
+        <td style={{ color: getColor(s2Delta) }}>
+          {lap.sector_2?.toFixed(3) ?? "-"}
+        </td>
+
+        <td style={{ color: getColor(s3Delta) }}>
+          {lap.sector_3?.toFixed(3) ?? "-"}
+        </td>
+
+        <td>{lap.lap_time_seconds.toFixed(3)}</td>
+        <td>{lap.compound}</td>
+        <td>{lap.stint}</td>
+      </tr>
+    );
+  })}
+</tbody>
+
     </table>
     </div>
 
