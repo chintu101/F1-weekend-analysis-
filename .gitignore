@@ -210,3 +210,4 @@ marimo/_lsp/
 __marimo__/
 backend/cache/fastf1_http_cache.sqlite
 /backend/cache
+*.sqlite
