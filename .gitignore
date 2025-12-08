@@ -146,6 +146,8 @@ venv.bak/
 .idea
 cache
 .sqlite
+backend/cache/
+
 
 # Spyder project settings
 .spyderproject
