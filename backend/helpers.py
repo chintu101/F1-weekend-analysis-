@@ -29,12 +29,15 @@ def find_latest_event():
     else:
         return None
 
-def loading_latest_session():
+def find_event_name():
     df = find_latest_event()
     if df is None:
         return None
     session_name = df['EventName']
+    return session_name
 
+def loading_latest_session():
+    session_name = find_event_name()
     session = f.get_session(year=datetime.now(timezone.utc).year, gp=session_name, identifier='R')
     session.load()
     return session
@@ -48,6 +51,7 @@ def race_results():
     raw_results = session.results
 
     clean_rows = []
+    clean_rows.append({"Session_Name": find_event_name()})
 
     for _, row in raw_results.iterrows():
         clean_rows.append({
@@ -68,7 +72,6 @@ def race_results():
 
             "Points": float(row["Points"]) if not pd.isna(row["Points"]) else 0
         })
-
     return clean_rows
 
 

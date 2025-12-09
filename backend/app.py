@@ -8,8 +8,8 @@ CORS(app)
 
 
 def getting_results():
-  session_results = race_results()
-  return jsonify(session_results)
+    session_results = race_results()
+    return jsonify(session_results)
 
 @app.route('/')
 def hello_api():
