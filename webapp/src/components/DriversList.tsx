@@ -23,7 +23,7 @@ function DriversList() {
     <div style={{ padding: "20px" }}>
       <h1>Latest Race Results</h1>
 
-      <table border={1} cellPadding={8} style={{ marginTop: "20px", width: "100%" }}>
+      <table border={10} cellPadding={8} style={{ marginTop: "20px", width: "100%" }}>
         <thead>
           <tr>
             <th>Pos</th>
@@ -38,11 +38,13 @@ function DriversList() {
           {results.map((row, index) => (
             <tr
               key={index}
-              style={{ cursor: "pointer" }}
-              onClick={() => navigate(`/driver/${row.DriverCode}`)}
+              
+              
             >
               <td>{row.Position}</td>
-              <td style={{ fontWeight: "bold", color: "blue" }}>
+              <td onClick={() => navigate(`/driver/${row.DriverCode}`)} 
+                  style={{ fontWeight: "bold", color: "Red", cursor: "pointer" }}>
+                    <image> </image>
                 {row.Driver}
               </td>
               <td>{row.Team}</td>
