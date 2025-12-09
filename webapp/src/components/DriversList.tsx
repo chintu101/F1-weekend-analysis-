@@ -44,7 +44,7 @@ function DriversList() {
               <td>{row.Position}</td>
               <td onClick={() => navigate(`/driver/${row.DriverCode}`)} 
                   style={{ fontWeight: "bold", color: "Red", cursor: "pointer" }}>
-                    <image> </image>
+                    <img src="https://media.formula1.com/image/upload/f_auto,q_auto/v1677244984/drivers/${ver}_01.png"/>
                 {row.Driver}
               </td>
               <td>{row.Team}</td>
