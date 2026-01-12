@@ -19,7 +19,8 @@ def find_latest_event():
     now_t = pd.to_datetime(time.time(), unit='s')
     print(now_t)
 
-    schedule_df = get_event_schedule_df(datetime.now(timezone.utc).year)
+    #schedule_df = get_event_schedule_df(datetime.now(timezone.utc).year)
+    schedule_df = get_event_schedule_df(2025) #testing in the beginning of 2026 but no races obviously lmao
     schedule_df['EventDate'] = pd.to_datetime(schedule_df['EventDate'])
 
     past = schedule_df[schedule_df['EventDate'] <= now_t]
@@ -38,7 +39,8 @@ def find_event_name():
 
 def loading_latest_session():
     session_name = find_event_name()
-    session = f.get_session(year=datetime.now(timezone.utc).year, gp=session_name, identifier='R')
+    #session = f.get_session(year=datetime.now(timezone.utc).year, gp=session_name, identifier='R') again in 2026, but no races yet
+    session = f.get_session(year=2025, gp=session_name, identifier='R')
     session.load()
     return session
 
