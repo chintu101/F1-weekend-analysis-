@@ -24,21 +24,6 @@ Features
 -Optimized Data Pipeline
 -FastF1 caching reduces repeated telemetry fetch latency by ~60–80%
 
-project-root/
-│
-├── backend/
-│   ├── app.py
-│   ├── helpers.py
-│   ├── cache/
-│   ├── requirements.txt
-│
-└── frontend/
-    ├── src/
-    │   ├── components/
-    │   ├── pages/
-    │   ├── App.tsx
-    │   └── main.tsx
-    ├── index.html
-    └── package.json
+
 
 pip install -r requirements.txt
