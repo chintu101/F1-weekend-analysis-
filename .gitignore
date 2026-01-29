@@ -213,3 +213,4 @@ __marimo__/
 backend/cache/fastf1_http_cache.sqlite
 /backend/cache
 *.sqlite
+backend/__pycache__/helpers.cpython-313.pyc
