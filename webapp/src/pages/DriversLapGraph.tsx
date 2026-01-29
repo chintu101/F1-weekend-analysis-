@@ -158,7 +158,7 @@ export default function DriverLapGraph() {
               type="monotone"
               dataKey="lap_time_seconds"
               name={`Stint ${stint.stint} (${stint.compound})`}
-              stroke={compoundColors[stint.compound] || "#888"}
+              stroke={compoundColors[stint.compound] || "#FFFFFF"}
               dot={false}
               strokeWidth={2}
             />
@@ -170,7 +170,8 @@ export default function DriverLapGraph() {
               x={fastestLap.lap_number}
               y={fastestLap.lap_time_seconds}
               r={8}
-              label="Fastest Lap"
+              label="Fastest La"
+              fill="#BF40BF"
             />
           )}
 
