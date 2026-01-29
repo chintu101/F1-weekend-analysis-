@@ -145,7 +145,7 @@ export default function DriverLapGraph() {
       <ResponsiveContainer width="100%" height={400}>
         <LineChart>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="lap_number" type="number" />
+          <XAxis dataKey="lap_number" type="number" fill="#FFFF" stroke="#FFFF" />
           <YAxis domain={["auto", "auto"]} />
           <Tooltip />
           <Legend />
@@ -170,8 +170,7 @@ export default function DriverLapGraph() {
               x={fastestLap.lap_number}
               y={fastestLap.lap_time_seconds}
               r={8}
-              label="Fastest La"
-              fill="#BF40BF"
+              label="Fastest Lap"
             />
           )}
 
