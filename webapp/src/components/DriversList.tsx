@@ -169,7 +169,9 @@ function DriversList() {
                   fontFamily: "monospace",
                   fontSize: "13px"
                 }}>
-                  {row.Time}
+                  {row.Time && typeof row.Time === 'string' 
+                    ? row.Time.split(' ').pop()?.replace(/(\.\d{3})\d*/, '$1')
+                    : row.Time}
                 </td>
                 <td style={{ 
                   padding: "14px 12px",
