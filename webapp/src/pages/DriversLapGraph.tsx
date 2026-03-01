@@ -31,6 +31,21 @@ const compoundColors: Record<string, string> = {
   WET: "#00aaff"
 };
 
+// Custom label renderer for fastest lap with arrow
+const FastestLapLabel = (props: any) => {
+  const { x, y } = props;
+  
+  return (
+    <g>
+      {/* Arrow pointing down to the point */}
+      <path
+        d={`M ${x} ${y - 20} L ${x - 5} ${y - 10} L ${x + 5} ${y - 10} Z`}
+        fill="#9333ea"
+      />
+    </g>
+  );
+};
+
 export default function DriverLapGraph() {
   const { driver } = useParams();
   const [laps, setLaps] = useState<LapData[]>([]);
@@ -173,13 +188,16 @@ export default function DriverLapGraph() {
             />
           ))}
 
-          {/* ✅ FASTEST LAP DOT */}
+          {/* ✅ FASTEST LAP MARKER WITH ARROW */}
           {fastestLap && (
             <ReferenceDot
               x={fastestLap.lap_number}
               y={fastestLap.lap_time_seconds}
-              r={8}
-              label="Fastest Lap"
+              r={7}
+              fill="#9333ea"
+              stroke="white"
+              strokeWidth={2}
+              label={<FastestLapLabel />}
             />
           )}
 
