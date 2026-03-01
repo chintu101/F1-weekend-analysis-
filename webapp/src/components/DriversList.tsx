@@ -20,40 +20,165 @@ function DriversList() {
   }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Latest Race Results</h1>
+    <div style={{ 
+      padding: "40px 20px",
+      maxWidth: "1000px",
+      margin: "0 auto",
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    }}>
+      <div style={{ marginBottom: "30px" }}>
+        <h1 style={{ 
+          margin: 0,
+          fontSize: "32px",
+          fontWeight: 600,
+          color: "#1a1a1a",
+          letterSpacing: "-0.5px"
+        }}>
+          Latest Race Results
+        </h1>
+      </div>
 
-      <table border={10} cellPadding={8} style={{ marginTop: "20px", width: "100%" }}>
-        <thead>
-          <tr>
-            <th>Pos</th>
-            <th>Driver</th>
-            <th>Team</th>
-            <th>Time</th>
-            <th>Points</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {results.map((row, index) => (
-            <tr
-              key={index}
-              
-              
-            >
-              <td>{row.Position}</td>
-              <td onClick={() => navigate(`/driver/${row.DriverCode}`)} 
-                  style={{ fontWeight: "bold", color: "Red", cursor: "pointer" }}>
-                    
-                {row.Driver}
-              </td>
-              <td>{row.Team}</td>
-              <td>{row.Time}</td>
-              <td>{row.Points}</td>
+      <div style={{
+        overflowX: "auto",
+        borderRadius: "8px",
+        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.08)"
+      }}>
+        <table style={{
+          width: "100%",
+          borderCollapse: "collapse",
+          fontSize: "14px"
+        }}>
+          <thead>
+            <tr style={{
+              backgroundColor: "#f8f9fa",
+              borderBottom: "1px solid #e5e7eb"
+            }}>
+              <th style={{ 
+                padding: "16px 12px",
+                textAlign: "left",
+                fontWeight: 600,
+                color: "#6b7280",
+                fontSize: "12px",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px"
+              }}>
+                Pos
+              </th>
+              <th style={{ 
+                padding: "16px 12px",
+                textAlign: "left",
+                fontWeight: 600,
+                color: "#6b7280",
+                fontSize: "12px",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px"
+              }}>
+                Driver
+              </th>
+              <th style={{ 
+                padding: "16px 12px",
+                textAlign: "left",
+                fontWeight: 600,
+                color: "#6b7280",
+                fontSize: "12px",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px"
+              }}>
+                Team
+              </th>
+              <th style={{ 
+                padding: "16px 12px",
+                textAlign: "left",
+                fontWeight: 600,
+                color: "#6b7280",
+                fontSize: "12px",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px"
+              }}>
+                Time
+              </th>
+              <th style={{ 
+                padding: "16px 12px",
+                textAlign: "right",
+                fontWeight: 600,
+                color: "#6b7280",
+                fontSize: "12px",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px"
+              }}>
+                Points
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {results.map((row, index) => (
+              <tr
+                key={index}
+                style={{
+                  borderBottom: index === results.length - 1 ? "none" : "1px solid #f3f4f6",
+                  transition: "background-color 0.15s ease",
+                  backgroundColor: "white"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#f9fafb";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "white";
+                }}
+              >
+                <td style={{ 
+                  padding: "14px 12px",
+                  color: "#9ca3af",
+                  fontWeight: 500
+                }}>
+                  {row.Position}
+                </td>
+                <td 
+                  onClick={() => navigate(`/driver/${row.DriverCode}`)} 
+                  style={{ 
+                    padding: "14px 12px",
+                    fontWeight: 600,
+                    color: "#1f2937",
+                    cursor: "pointer",
+                    transition: "color 0.2s ease"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = "#ff2b2b";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = "#1f2937";
+                  }}
+                >
+                  {row.Driver}
+                </td>
+                <td style={{ 
+                  padding: "14px 12px",
+                  color: "#6b7280"
+                }}>
+                  {row.Team}
+                </td>
+                <td style={{ 
+                  padding: "14px 12px",
+                  color: "#6b7280",
+                  fontFamily: "monospace",
+                  fontSize: "13px"
+                }}>
+                  {row.Time}
+                </td>
+                <td style={{ 
+                  padding: "14px 12px",
+                  textAlign: "right",
+                  color: "#1f2937",
+                  fontWeight: 600
+                }}>
+                  {row.Points}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
