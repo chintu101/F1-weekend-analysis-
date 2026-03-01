@@ -23,7 +23,7 @@ function DriversList() {
     <div style={{ 
       padding: "40px 20px",
       maxWidth: "1000px",
-      margin: "0 auto",
+      margin: "0",
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
     }}>
       <div style={{ marginBottom: "30px" }}>
@@ -31,8 +31,13 @@ function DriversList() {
           margin: 0,
           fontSize: "32px",
           fontWeight: 600,
-          color: "#1a1a1a",
-          letterSpacing: "-0.5px"
+          color: "white",
+          letterSpacing: "-0.5px",
+          backgroundColor: "#ff2b2b",
+          padding: "16px 24px",
+          borderRadius: "8px",
+          display: "inline-block",
+          boxShadow: "0 8px 16px rgba(255, 43, 43, 0.4)"
         }}>
           Latest Race Results
         </h1>
