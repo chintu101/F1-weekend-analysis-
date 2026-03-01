@@ -16,6 +16,9 @@ import {
 type LapData = {
   lap_number: number;
   lap_time_seconds: number;
+  sector_1: number | null;
+  sector_2: number | null;
+  sector_3: number | null;
   compound: string;
   stint: number;
 };
@@ -32,6 +35,12 @@ export default function DriverLapGraph() {
   const { driver } = useParams();
   const [laps, setLaps] = useState<LapData[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = (seconds % 60).toFixed(3);
+    return `${mins}:${parseFloat(secs) < 10 ? '0' : ''}${secs}`;
+  };
 
   useEffect(() => {
     if (!driver) return;
@@ -138,7 +147,7 @@ export default function DriverLapGraph() {
       {fastestLap && (
         <h3>
           🟣 Fastest Lap: Lap {fastestLap.lap_number} —{" "}
-          {fastestLap.lap_time_seconds.toFixed(3)}s
+          {formatTime(fastestLap.lap_time_seconds)}
         </h3>
       )}
 
@@ -147,7 +156,7 @@ export default function DriverLapGraph() {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="lap_number" type="number" fill="#FFFF" stroke="#FFFF" />
           <YAxis domain={["auto", "auto"]} />
-          <Tooltip />
+          <Tooltip contentStyle={{ backgroundColor: "#000000", border: "1px solid #333333", borderRadius: "4px" }} />
           <Legend />
 
           {/* ✅ TYRE COLORED STINT LINES */}
@@ -199,19 +208,19 @@ export default function DriverLapGraph() {
       ⬇ Download CSV
     </button>
 
-    <h2 style={{ marginTop: "40px" }}>Lap Sector Times</h2>
+    <h2 style={{ marginTop: "40px", fontSize: "20px", fontWeight: 600, color: "white" }}>Lap Sector Times</h2>
 
-    <div style={{ maxHeight: "400px", overflowY: "auto" }}>
-    <table border={1} cellPadding={8} style={{ width: "100%" }}>
+    <div style={{ maxHeight: "400px", overflowY: "auto", borderRadius: "8px" }}>
+    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px", backgroundColor: "transparent" }}>
         <thead>
-        <tr>
-            <th>Lap</th>
-            <th>S1 (s)</th>
-            <th>S2 (s)</th>
-            <th>S3 (s)</th>
-            <th>Lap Time (s)</th>
-            <th>Compound</th>
-            <th>Stint</th>
+        <tr style={{ backgroundColor: "rgba(248, 249, 250, 0.5)", borderBottom: "1px solid rgba(229, 231, 235, 0.5)" }}>
+            <th style={{ padding: "12px", textAlign: "left", fontWeight: 600, color: "white", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Lap</th>
+            <th style={{ padding: "12px", textAlign: "left", fontWeight: 600, color: "white", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>S1 (s)</th>
+            <th style={{ padding: "12px", textAlign: "left", fontWeight: 600, color: "white", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>S2 (s)</th>
+            <th style={{ padding: "12px", textAlign: "left", fontWeight: 600, color: "white", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>S3 (s)</th>
+            <th style={{ padding: "12px", textAlign: "left", fontWeight: 600, color: "white", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Lap Time (s)</th>
+            <th style={{ padding: "12px", textAlign: "left", fontWeight: 600, color: "white", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Compound</th>
+            <th style={{ padding: "12px", textAlign: "left", fontWeight: 600, color: "white", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Stint</th>
         </tr>
         </thead>
         <tbody>
@@ -223,29 +232,29 @@ export default function DriverLapGraph() {
     const s3Delta = prev ? lap.sector_3 !== null && prev.sector_3 !== null ? lap.sector_3 - prev.sector_3 : 0 : null;
 
     const getColor = (delta: number | null) => {
-      if (delta === null) return "black";
-      return delta < 0 ? "green" : delta > 0 ? "red" : "black";
+      if (delta === null || delta === 0) return "white";
+      return delta < 0 ? "green" : delta > 0 ? "red" : "white";
     };
 
     return (
-      <tr key={lap.lap_number}>
-        <td>{lap.lap_number}</td>
+      <tr key={lap.lap_number} style={{ borderBottom: "1px solid rgba(243, 244, 246, 0.5)", backgroundColor: "transparent" }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "rgba(249, 250, 251, 0.3)"; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}>
+        <td style={{ padding: "12px", color: "#6b7280" }}>{lap.lap_number}</td>
 
-        <td style={{ color: getColor(s1Delta) }}>
+        <td style={{ padding: "12px", color: getColor(s1Delta), fontFamily: "monospace", fontSize: "13px" }}>
           {lap.sector_1?.toFixed(3) ?? "-"}
         </td>
 
-        <td style={{ color: getColor(s2Delta) }}>
+        <td style={{ padding: "12px", color: getColor(s2Delta), fontFamily: "monospace", fontSize: "13px" }}>
           {lap.sector_2?.toFixed(3) ?? "-"}
         </td>
 
-        <td style={{ color: getColor(s3Delta) }}>
+        <td style={{ padding: "12px", color: getColor(s3Delta), fontFamily: "monospace", fontSize: "13px" }}>
           {lap.sector_3?.toFixed(3) ?? "-"}
         </td>
 
-        <td>{lap.lap_time_seconds.toFixed(3)}</td>
-        <td>{lap.compound}</td>
-        <td>{lap.stint}</td>
+        <td style={{ padding: "12px", color: "#6b7280", fontFamily: "monospace", fontSize: "13px" }}>{formatTime(lap.lap_time_seconds)}</td>
+        <td style={{ padding: "12px", color: "#6b7280" }}>{lap.compound}</td>
+        <td style={{ padding: "12px", color: "#6b7280" }}>{lap.stint}</td>
       </tr>
     );
   })}
