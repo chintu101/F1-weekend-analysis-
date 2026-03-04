@@ -3,20 +3,93 @@ import { useNavigate } from "react-router-dom";
 
 function DriversList() {
   const [results, setResults] = useState<any[]>([]);
+  const [eventName, setEventName] = useState<string>("Latest Race Results");
   const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Simulate progress increments
+    const progressInterval = setInterval(() => {
+      setProgress(prev => {
+        if (prev < 90) {
+          return prev + Math.random() * 40;
+        }
+        return prev;
+      });
+    }, 300);
+
     fetch("http://localhost:5000/")
       .then(res => res.json())
       .then(data => {
         setResults(data);
-        setLoading(false);
-      });
+        // Extract event name from the first item if it exists
+        if (data && data.length > 0 && data[0].Session_Name) {
+          setEventName(data[0].Session_Name);
+        }
+        setProgress(100);
+        setTimeout(() => setLoading(false), 300);
+      })
+      .finally(() => clearInterval(progressInterval));
   }, []);
 
   if (loading) {
-    return <h2>Loading race results...</h2>;
+    return (
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        padding: "20px",
+        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+      }}>
+        <style>{`
+          @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+          }
+          .loading-text {
+            animation: pulse 2s infinite;
+          }
+        `}</style>
+        
+        <h2 style={{
+          fontSize: "24px",
+          fontWeight: 600,
+          color: "white",
+          marginBottom: "40px",
+          textAlign: "center"
+        }} className="loading-text">
+          Loading latest results...
+        </h2>
+        
+        <div style={{
+          width: "300px",
+          height: "8px",
+          backgroundColor: "#e5e7eb",
+          borderRadius: "4px",
+          overflow: "hidden",
+          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"
+        }}>
+          <div style={{
+            height: "100%",
+            width: `${Math.min(progress, 100)}%`,
+            backgroundColor: "#ff2b2b",
+            transition: "width 0.4s ease",
+            borderRadius: "4px"
+          }} />
+        </div>
+        
+        <p style={{
+          marginTop: "20px",
+          color: "#6b7280",
+          fontSize: "14px"
+        }}>
+          {Math.round(Math.min(progress, 100))}%
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -39,7 +112,7 @@ function DriversList() {
           display: "inline-block",
           boxShadow: "0 8px 16px rgba(255, 43, 43, 0.4)"
         }}>
-          Latest Race Results
+          {eventName}
         </h1>
       </div>
 
