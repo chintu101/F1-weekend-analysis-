@@ -100,20 +100,34 @@ function DriversList() {
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
     }}>
       <div style={{ marginBottom: "30px" }}>
-        <h1 style={{ 
-          margin: 0,
-          fontSize: "32px",
-          fontWeight: 600,
-          color: "white",
-          letterSpacing: "-0.5px",
-          backgroundColor: "#ff2b2b",
-          padding: "16px 24px",
-          borderRadius: "8px",
-          display: "inline-block",
-          boxShadow: "0 8px 16px rgba(255, 43, 43, 0.4)"
-        }}>
+        <button 
+          onClick={() => navigate(`/track/${encodeURIComponent(eventName)}`)}
+          style={{ 
+            margin: 0,
+            fontSize: "32px",
+            fontWeight: 600,
+            color: "white",
+            letterSpacing: "-0.5px",
+            backgroundColor: "#ff2b2b",
+            padding: "16px 24px",
+            borderRadius: "8px",
+            display: "inline-block",
+            boxShadow: "0 8px 16px rgba(255, 43, 43, 0.4)",
+            border: "none",
+            cursor: "pointer",
+            transition: "all 0.2s ease"
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.boxShadow = "0 12px 24px rgba(255, 43, 43, 0.6)";
+            e.currentTarget.style.transform = "translateY(-2px)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.boxShadow = "0 8px 16px rgba(255, 43, 43, 0.4)";
+            e.currentTarget.style.transform = "translateY(0)";
+          }}
+        >
           {eventName}
-        </h1>
+        </button>
       </div>
 
       <div style={{

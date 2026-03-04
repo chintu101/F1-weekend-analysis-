@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-from helpers import race_results, get_driver_lap_times
+from helpers import race_results, get_driver_lap_times, generate_track_image
 
 app = Flask(__name__)
 CORS(app)
@@ -31,6 +31,17 @@ def driver_laptimes_api(driver):
 def test_ver_direct():
     data = get_driver_lap_times("VER")
     return jsonify(data)
+
+@app.route("/api/track")
+def get_track():
+    image_base64 = generate_track_image()
+    if image_base64:
+        return jsonify({
+            "status": "success",
+            "image": f"data:image/png;base64,{image_base64}"
+        })
+    else:
+        return jsonify({"status": "error", "message": "Failed to generate track"}), 500
 
 
 if __name__ == "__main__":
