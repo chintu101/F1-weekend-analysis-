@@ -3,10 +3,6 @@ import pandas as pd
 from datetime import datetime, timezone
 import time
 import os
-import matplotlib.pyplot as plt
-import numpy as np
-from io import BytesIO
-import base64
 
 from scipy.constants import value
 
@@ -132,121 +128,6 @@ def get_driver_lap_times(driver_code):
 
     print("✅ Clean laps returned:", len(clean_laps))
     return clean_laps
-
-
-def rotate(xy, *, angle):
-    """Rotate points around origin"""
-    rot_mat = np.array([[np.cos(angle), np.sin(angle)],
-                        [-np.sin(angle), np.cos(angle)]])
-    return np.matmul(xy, rot_mat)
-
-
-def generate_track_image():
-    """Generate track layout image with sector highlighting"""
-    try:
-        session = loading_latest_session()
-        
-        if session is None:
-            return None
-        
-        # Get the fastest lap and position data
-        session.load(laps=True)
-        lap = session.laps.pick_fastest()
-        pos = lap.get_pos_data()
-        circuit_info = session.get_circuit_info()
-        
-        # Create figure
-        fig, ax = plt.subplots(figsize=(12, 12), dpi=100)
-        fig.patch.set_facecolor('black')
-        ax.set_facecolor('black')
-        
-        # Get track coordinates
-        track = pos.loc[:, ('X', 'Y')].to_numpy()
-        track_angle = circuit_info.rotation / 180 * np.pi
-        rotated_track = rotate(track, angle=track_angle)
-        
-        # Get sector information
-        sector_1_end = circuit_info.corners.iloc[0]  # First corner ends sector 1
-        sector_2_end = None
-        
-        # Find second sector end (usually around 1/2 or 2/3 of corners)
-        if len(circuit_info.corners) > 1:
-            sector_2_end = circuit_info.corners.iloc[len(circuit_info.corners) // 2]
-        
-        # Color sectors
-        sector_1_color = '#ffd500'  # Yellow
-        sector_2_color = '#ff2b2b'  # Red
-        sector_3_color = '#9333ea'  # Purple
-        
-        # Plot full track in white first
-        ax.plot(rotated_track[:, 0], rotated_track[:, 1], color='white', linewidth=2.5, alpha=0.3)
-        
-        # Highlight sectors with different colors
-        track_length = len(rotated_track)
-        
-        # Sector 1 - First 1/3
-        sector_1_end_idx = track_length // 3
-        ax.plot(rotated_track[:sector_1_end_idx, 0], rotated_track[:sector_1_end_idx, 1], 
-               color=sector_1_color, linewidth=3.5, zorder=3)
-        
-        # Sector 2 - Middle 1/3
-        sector_2_start_idx = sector_1_end_idx
-        sector_2_end_idx = (track_length * 2) // 3
-        ax.plot(rotated_track[sector_2_start_idx:sector_2_end_idx, 0], 
-               rotated_track[sector_2_start_idx:sector_2_end_idx, 1],
-               color=sector_2_color, linewidth=3.5, zorder=3)
-        
-        # Sector 3 - Last 1/3
-        sector_3_start_idx = sector_2_end_idx
-        ax.plot(rotated_track[sector_3_start_idx:, 0], rotated_track[sector_3_start_idx:, 1],
-               color=sector_3_color, linewidth=3.5, zorder=3)
-        
-        # Plot corners with labels
-        offset_vector = [500, 0]
-        for _, corner in circuit_info.corners.iterrows():
-            # Create corner label (number + letter if available)
-            corner_num = str(int(corner['Number']))
-            corner_letter = corner.get('Letter', '')
-            corner_label = corner_num + corner_letter if corner_letter else corner_num
-            
-            offset_angle = corner['Angle'] / 180 * np.pi
-            offset_x, offset_y = rotate(offset_vector, angle=offset_angle)
-            
-            text_x = corner['X'] + offset_x
-            text_y = corner['Y'] + offset_y
-            text_x, text_y = rotate([text_x, text_y], angle=track_angle)
-            
-            track_x, track_y = rotate([corner['X'], corner['Y']], angle=track_angle)
-            
-            # Draw circle marker at corner position
-            ax.scatter(track_x, track_y, color='#ffffff', s=80, zorder=5, alpha=0.7)
-            
-            # Draw text label with corner number
-            ax.text(text_x, text_y, corner_label, va='center', ha='center', 
-                   fontsize=10, color='#ffffff', fontweight='bold', zorder=6, alpha=0.8)
-        
-        ax.set_xticks([])
-        ax.set_yticks([])
-        ax.axis('equal')
-        ax.spines['top'].set_visible(False)
-        ax.spines['right'].set_visible(False)
-        ax.spines['bottom'].set_visible(False)
-        ax.spines['left'].set_visible(False)
-        
-        # Convert to base64
-        buffer = BytesIO()
-        plt.savefig(buffer, format='png', bbox_inches='tight', facecolor='black')
-        buffer.seek(0)
-        image_base64 = base64.b64encode(buffer.read()).decode()
-        plt.close(fig)
-        
-        return image_base64
-    
-    except Exception as e:
-        print(f"❌ Error generating track image: {e}")
-        import traceback
-        traceback.print_exc()
-        return None
 
 
 
