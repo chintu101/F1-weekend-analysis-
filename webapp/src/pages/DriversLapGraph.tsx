@@ -50,6 +50,7 @@ export default function DriverLapGraph() {
   const { driver } = useParams();
   const [laps, setLaps] = useState<LapData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [eventName, setEventName] = useState<string>("");
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -67,6 +68,7 @@ export default function DriverLapGraph() {
           setLaps(data);
         } else if (data.laps && Array.isArray(data.laps)) {
           setLaps(data.laps);
+          setEventName(data.event_name || "");
         } else {
           setLaps([]);
         }

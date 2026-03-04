@@ -100,7 +100,9 @@ function DriversList() {
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
     }}>
       <div style={{ marginBottom: "30px" }}>
-        <h1 style={{ 
+        <h1
+        onClick={() => navigate("/track")} 
+        style={{ 
           margin: 0,
           fontSize: "32px",
           fontWeight: 600,
@@ -110,7 +112,8 @@ function DriversList() {
           padding: "16px 24px",
           borderRadius: "8px",
           display: "inline-block",
-          boxShadow: "0 8px 16px rgba(255, 43, 43, 0.4)"
+          boxShadow: "0 8px 16px rgba(255, 43, 43, 0.4)",
+          cursor: "pointer"
         }}>
           {eventName}
         </h1>
