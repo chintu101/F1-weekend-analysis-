@@ -215,3 +215,4 @@ backend/cache/fastf1_http_cache.sqlite
 *.sqlite
 backend/__pycache__/helpers.cpython-313.pyc
 /backend/__pycache__
+*.sqlite
