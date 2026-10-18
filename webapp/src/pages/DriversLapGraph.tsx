@@ -50,7 +50,7 @@ export default function DriverLapGraph() {
   const { driver } = useParams();
   const [laps, setLaps] = useState<LapData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [eventName, setEventName] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -62,19 +62,27 @@ export default function DriverLapGraph() {
     if (!driver) return;
 
     fetch(`http://localhost:5000/api/laptimes/${driver}`)
-      .then((res) => res.json())
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "Unable to load lap times.");
+        }
+        return data;
+      })
       .then((data) => {
         if (Array.isArray(data)) {
           setLaps(data);
         } else if (data.laps && Array.isArray(data.laps)) {
           setLaps(data.laps);
-          setEventName(data.event_name || "");
         } else {
           setLaps([]);
         }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err: unknown) => {
+        setError(err instanceof Error ? err.message : "Unable to load lap times.");
+        setLoading(false);
+      });
   }, [driver]);
 
   // csv download
@@ -156,6 +164,15 @@ export default function DriverLapGraph() {
   }, [laps]);
 
   if (loading) return <h2>Loading lap times for {driver}...</h2>;
+
+  if (error || laps.length === 0) {
+    return (
+      <div style={{ padding: "20px" }}>
+        <h1>{driver} — Lap Time Chart</h1>
+        <p role="alert">{error || "No lap-time data is available for this driver and session."}</p>
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: "20px" }}>

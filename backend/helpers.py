@@ -1,12 +1,15 @@
 import fastf1 as f
 import pandas as pd
 from datetime import datetime, timezone
-import time
+from functools import lru_cache
 import os
-
-from scipy.constants import value
+from threading import RLock
 
 f.Cache.enable_cache(os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache"))
+
+_session_lock = RLock()
+_cached_sessions = {}
+_cached_event_key = None
 
 
 def get_event_schedule_df(year):
@@ -16,19 +19,25 @@ def get_event_schedule_df(year):
 
 
 def find_latest_event():
-    now_t = pd.to_datetime(time.time(), unit='s')
-    print(now_t)
+    event = _find_latest_event_for_date(pd.Timestamp.now(tz="UTC").date().isoformat())
+    return event.copy() if event is not None else None
 
-    #schedule_df = get_event_schedule_df(datetime.now(timezone.utc).year)
-    schedule_df = get_event_schedule_df(2025) #testing in the beginning of 2026 but no races obviously lmao
-    schedule_df['EventDate'] = pd.to_datetime(schedule_df['EventDate'])
 
-    past = schedule_df[schedule_df['EventDate'] <= now_t]
+@lru_cache(maxsize=8)
+def _find_latest_event_for_date(date_key):
+    now = pd.Timestamp.now(tz="UTC")
 
-    if not past.empty:
-       return past.iloc[-1]
-    else:
-        return None
+    for year in range(now.year, 1949, -1):
+        schedule_df = get_event_schedule_df(year)
+        schedule_df["EventDate"] = pd.to_datetime(schedule_df["EventDate"], utc=True)
+        past = schedule_df[schedule_df["EventDate"] <= now]
+
+        if not past.empty:
+            latest = past.sort_values("EventDate").iloc[-1].copy()
+            latest["Season"] = year
+            return latest
+
+    return None
 
 def find_event_name():
     df = find_latest_event()
@@ -37,12 +46,34 @@ def find_event_name():
     session_name = df['EventName']
     return session_name
 
-def loading_latest_session():
-    session_name = find_event_name()
-    #session = f.get_session(year=datetime.now(timezone.utc).year, gp=session_name, identifier='R') again in 2026, but no races yet
-    session = f.get_session(year=2025, gp=session_name, identifier='R')
-    session.load()
-    return session
+def loading_latest_session(load_laps=False):
+    global _cached_event_key
+
+    event = find_latest_event()
+    if event is None:
+        return None
+
+    event_key = (int(event["Season"]), str(event["EventName"]), "R")
+    session_key = (*event_key, load_laps)
+
+    with _session_lock:
+        if event_key != _cached_event_key:
+            _cached_sessions.clear()
+            _cached_event_key = event_key
+
+        if session_key not in _cached_sessions:
+            session = f.get_session(
+                year=event_key[0], gp=event_key[1], identifier=event_key[2]
+            )
+            session.load(
+                laps=load_laps,
+                telemetry=False,
+                weather=False,
+                messages=False,
+            )
+            _cached_sessions[session_key] = session
+
+        return _cached_sessions[session_key]
 
 def race_results():
     session = loading_latest_session()
@@ -78,13 +109,12 @@ def race_results():
 
 
 def get_driver_lap_times(driver_code):
-    session = loading_latest_session()
+    session = loading_latest_session(load_laps=True)
 
     if session is None:
         print("❌ Session is None")
         return []
 
-    session.load(laps=True)
     laps_df = session.laps
 
     print("✅ Total laps in session:", len(laps_df))
