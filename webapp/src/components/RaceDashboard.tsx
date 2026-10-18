@@ -80,6 +80,7 @@ export default function RaceDashboard() {
 
   const winner = results.find((row) => row.Position === 1) ?? results[0];
   const secondPlace = results.find((row) => row.Position === 2);
+  const thirdPlace = results.find((row) => row.Position === 3);
 
   const exportResults = () => {
     if (results.length === 0) return;
@@ -120,9 +121,9 @@ export default function RaceDashboard() {
           <span className="summary-index">02</span>
         </article>
         <article className="summary-block field-block">
-          <span className="summary-label">CLASSIFICATION</span>
-          <strong>{loading ? "—" : String(results.length).padStart(2, "0")}</strong>
-          <span className="summary-detail">drivers in results</span>
+          <span className="summary-label">PODIUM · P3</span>
+          <strong>{loading ? "Loading" : thirdPlace?.Driver ?? "—"}</strong>
+          <span className="summary-detail">{thirdPlace ? `${thirdPlace.Team} · ${thirdPlace.Points} points` : "No third-place result"}</span>
           <span className="summary-index">03</span>
         </article>
       </div>
