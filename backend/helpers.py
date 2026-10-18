@@ -81,10 +81,14 @@ def race_results():
     if session is None:
         return []
 
+    event = find_latest_event()
     raw_results = session.results
 
     clean_rows = []
-    clean_rows.append({"Session_Name": find_event_name()})
+    clean_rows.append({
+        "Session_Name": event["EventName"],
+        "Season": int(event["Season"]),
+    })
 
     for _, row in raw_results.iterrows():
         clean_rows.append({
