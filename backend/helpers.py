@@ -88,6 +88,7 @@ def race_results():
     clean_rows.append({
         "Session_Name": event["EventName"],
         "Season": int(event["Season"]),
+        "Location": event["Location"],
     })
 
     for _, row in raw_results.iterrows():
